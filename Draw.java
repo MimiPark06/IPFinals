@@ -1,11 +1,12 @@
 import javax.swing.JComponent;
 import java.awt.Color;
 import java.awt.Graphics;
-
+import javax.swing.Timer;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.net.URL;
+import java.util.Random;
 
 public class Draw extends JComponent{
 
@@ -18,11 +19,25 @@ public class Draw extends JComponent{
 	//circles's position
 	public int x = 30;
 	public int y = 280;
+	public int height = 0;
+	public int width = 0;
 
 	//animation states
 	public int state = 0;
 
+	// randomizer
+	public Random randomizer;
+
+	// enemy
+	public int enemyCount;
+	Monster[] monsters = new Monster[10];
+
+
 	public Draw(){
+		randomizer = new Random();
+		spawnEnemy();
+		
+
 		try{
 			image = ImageIO.read(resource);
 			backgroundImage = ImageIO.read(getClass().getResource("background.png"));
@@ -30,7 +45,41 @@ public class Draw extends JComponent{
 		catch(IOException e){
 			e.printStackTrace();
 		}
+
+		height = image.getHeight();
+		width = image.getWidth();
+
+		startGame();
 	}
+	
+	public void startGame(){
+		Thread gameThread = new Thread(new Runnable(){
+			public void run(){
+				while(true){
+					try{
+						for(int c = 0; c < monsters.length; c++){
+							if(monsters[c]!=null){
+								monsters[c].moveTo(x,y);
+								repaint();
+							}
+						}
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+							e.printStackTrace();
+					}
+				}
+			}
+		});
+		gameThread.start();
+	}
+
+	public void spawnEnemy(){
+		if(enemyCount < 10){
+			monsters[enemyCount] = new Monster(randomizer.nextInt(400), randomizer.nextInt(400), this);
+			enemyCount++;
+		}
+	}
+
 	public void reloadImage(){
 		state++;
 
@@ -254,5 +303,13 @@ public class Draw extends JComponent{
 		g.setColor(Color.YELLOW);
 		g.drawImage(backgroundImage, 0,0, this);
 		g.drawImage(image, x,y, this);
+
+	for(int c = 0; c < monsters.length; c++){
+			if(monsters[c]!=null){
+				g.drawImage(monsters[c].image, monsters[c].xPos, monsters[c].yPos, this);
+				g.setColor(Color.GREEN);
+				g.fillRect(monsters[c].xPos+7, monsters[c].yPos, monsters[c].life, 2);
+		}
 	}
+}
 }
