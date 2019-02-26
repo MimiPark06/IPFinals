@@ -50,6 +50,9 @@ public class MyFrame extends JFrame implements KeyListener{
 	else if(e.getKeyCode() == KeyEvent.VK_S){
 			drawing.spawnEnemy();
 		}
+	else if(e.getKeyCode() == KeyEvent.VK_W){
+			drawing.jump();
+		}
 		drawing.reloadImage();
 	}
 	public void keyReleased(KeyEvent e){

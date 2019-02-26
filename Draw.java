@@ -133,6 +133,13 @@ public class Draw extends JComponent{
 						e.printStackTrace();
 					}
 				}
+				for(int x=0; x<monsters.length; x++){
+					if(monsters[x]!=null){
+						if(monsters[x].contact){
+							monsters[x].life = monsters[x].life - 15;
+						}
+					}
+				}
 			}
 		});
 		thread1.start();
@@ -187,7 +194,7 @@ public class Draw extends JComponent{
 							e.printStackTrace();
 						}
 						repaint();
-						Thread.sleep(100);
+						Thread.sleep(200);
 					}catch(InterruptedException e){
 						e.printStackTrace();
 					}
@@ -274,29 +281,74 @@ public class Draw extends JComponent{
 	}
 
 	public void moveUp(){
-		//y = y - 5;
-		//reloadImage();
-		//repaint();
-		jumpAnimation();
+		y = y - 5;
+		reloadImage();
+		repaint();
+		checkCollision();
 	}
 
 	public void moveDown(){
 		y = y + 5;
 		reloadImage();
 		repaint();
+		checkCollision();
 	}
 
 	public void moveLeft(){
 		x = x - 5;
 		reloadImage();
 		repaint();
+		checkCollision();
 	}
 
 	public void moveRight(){
 		x = x + 5;
 		reloadImage();
 		repaint();
+		checkCollision();
 	}
+
+
+	public void checkCollision(){
+		int xChecker = x + width;
+		int yChecker = y;
+
+		for(int x=0; x<monsters.length; x++){
+			boolean collideX = false;
+			boolean collideY = false;
+
+			if(monsters[x]!=null){
+				monsters[x].contact = false;
+
+				if(yChecker > monsters[x].yPos){
+					if(yChecker-monsters[x].yPos < monsters[x].height){
+						collideY = true;
+					}
+				}
+				else{
+					if(monsters[x].yPos - yChecker < monsters[x].height){
+						collideY = true;
+					}
+				}
+
+				if(xChecker > monsters[x].xPos){
+					if(xChecker-monsters[x].xPos < monsters[x].width){
+						collideX = true;
+					}
+				}
+				else{
+					if(monsters[x].xPos - xChecker < 5){
+						collideX = true;
+					}
+				}
+			}
+
+			if(collideX && collideY){
+				System.out.println("collision!");
+				monsters[x].contact = true;
+			}
+		}
+	}	
 
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
@@ -312,4 +364,13 @@ public class Draw extends JComponent{
 		}
 	}
 }
-}
+	public void checkDeath(){
+			for(int c = 0; c < monsters.length; c++){
+				if(monsters[c]!=null){
+					if(!monsters[c].alive){
+						monsters[c] = null;
+					}
+				}			
+			}
+		}
+	}
