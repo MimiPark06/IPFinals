@@ -1,6 +1,9 @@
 import javax.swing.JFrame;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.*;
+import java.io.File;
+import javax.sound.sampled.*;
 
 public class MyFrame extends JFrame implements KeyListener{
 
@@ -73,5 +76,17 @@ public class MyFrame extends JFrame implements KeyListener{
 		gameFrame.getContentPane().add(gameFrame.drawing);
 		gameFrame.addKeyListener(gameFrame);
 		System.out.println("Start!");
+		try{
+				AudioInputStream bg = AudioSystem.getAudioInputStream(new File("Ambience.wav"));
+
+				Clip clip = AudioSystem.getClip();
+				clip.open(bg);
+
+				clip.start();
+
+				for (int i=0; i<30000; i++)
+				System.out.println("");
+
+			}catch(Exception e){e.printStackTrace();}
 	}
 }
